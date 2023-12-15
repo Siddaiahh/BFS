@@ -1,0 +1,38 @@
+from RMP import dict_gn
+from RMP import dict_hm
+import queue as Q
+
+start = 'Bucharest'
+goal = 'Bucharest'
+result = ' '
+
+
+def get_fn(citystr):
+    cities = citystr.split(',')
+    hm = gn = 0
+    for ctr in range(0, len(cities) - 1):
+        gn = gn + dict_gn[cities[ctr]][cities[ctr + 1]]
+    hm = dict_hm[cities[len(cities) - 1]]
+    return hm + gn
+
+
+def expand(cityq):
+    global result
+    tot, citystr, thiscity = cityq.get()
+    if thiscity == goal:
+        result = citystr + '::' + str(tot)
+        return
+    for cty in dict_gn[thiscity]:
+        cityq.put((get_fn(citystr + "," + cty), citystr + "," + cty, cty))
+
+
+def main():
+    cityq = Q.PriorityQueue()
+    thiscity = start
+    cityq.put((get_fn(start), start, thiscity))
+    expand(cityq)
+    print("The A* path with the total is: ")
+    print(result)
+
+
+main()
